@@ -105,9 +105,9 @@
 				<div class="col-sm-7">
 					<div class="col-md-12">
 						<select id="invoiceStatus" name="invoiceStatus" class="form-control">
-							<option value="unpaid"{{ ( $invoice->invoiceStatus === "unpaid" ) ? 'selected' : '' }}>Unpaid</option>
-							<option value="partial"{{ ( $invoice->invoiceStatus === "partial" ) ? 'selected' : '' }}>Partial</option>
-							<option value="paid"{{ ( $invoice->invoiceStatus === "paid" ) ? 'selected' : '' }}>Paid</option>
+							<option value="unpaid">Unpaid</option>
+							<option value="partial">Partial</option>
+							<option value="paid">Paid</option>
 						</select>
 						<input name="id" id="id" type="hidden" class="form-control" >
 					</div>

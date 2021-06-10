@@ -114,7 +114,7 @@
 															<small for="customer.name">{{ $errors->first('customer.name') }}</small>
 														</span>
 													@endif
-													<input type="hidden" name="customerId" id="customerId" >
+													<input type="hidden" name="customer[customerId]" id="customerId" >
 												</div>
 											</div>
 											<div class="col-sm-6 col-md-6">
