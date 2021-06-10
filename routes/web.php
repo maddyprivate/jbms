@@ -77,6 +77,11 @@ Route::post('/payOutstandingBalance', [
     'uses'  => 'Backend\ContactsController@payOutstandingBalance',
 ])->middleware('AuthUser');
 
+Route::post('/changeInvoiceStatus', [
+    'as'    => 'ChangeInvoiceStatus',
+    'uses'  => 'Backend\InvoicesController@changeInvoiceStatus',
+])->middleware('AuthUser');
+
 Route::get('/invoices/print/{id}/{copy}', [
     'as'    => 'PrintInvoice',
     'uses'  => 'Backend\InvoicesController@printinvoice',

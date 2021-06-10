@@ -56,7 +56,9 @@
 														<a class="btn btn-sm btn-warning mb-2 mb-sm-0" href="{{ route('Invoices.invoices.edit', $invoice['id'])  }}" data-toggle="tooltip" title="@lang('laryl.tooltips.edit')">
 															@lang('laryl.buttons.edit')
 														</a>
-
+														<a class="btn btn-sm btn-primary mb-2 mb-sm-0" data-remodal-target="invoiceStatusChange" href="javascript:;"  title="@lang('laryl.tooltips.payment')" onclick="$('#invoiceStatusChange').val('{{$invoice['invoiceStatus']}}');$('#id').val('{{$invoice['id']}}');">
+															@lang('laryl.buttons.payment')
+														</a>
 												</td>
 											</tr>
 
@@ -93,4 +95,31 @@
 		</div>
 	</div>
 </section>
+<div class="remodal" data-remodal-id="invoiceStatusChange" aria-labelledby="modalTitle" aria-describedby="modalDesc" data-remodal-options="hashTracking: false, closeOnOutsideClick: false">
+	<button data-remodal-action="close" class="remodal-close" aria-label="Close"></button>
+	<div>
+		<form id="invoiceStatusChange_form" method="post" action="{{url('changeInvoiceStatus')}}">
+			@csrf
+			<div class="form-group row align-items-center">
+				<label for="invoiceStatus" class="col-md-5 col-form-label">Change to @lang('laryl-invoices.form.label.invoiceStatus')</label>
+				<div class="col-sm-7">
+					<div class="col-md-12">
+						<select id="invoiceStatus" name="invoiceStatus" class="form-control">
+							<option value="unpaid"{{ ( $invoice->invoiceStatus === "unpaid" ) ? 'selected' : '' }}>Unpaid</option>
+							<option value="partial"{{ ( $invoice->invoiceStatus === "partial" ) ? 'selected' : '' }}>Partial</option>
+							<option value="paid"{{ ( $invoice->invoiceStatus === "paid" ) ? 'selected' : '' }}>Paid</option>
+						</select>
+						<input name="id" id="id" type="hidden" class="form-control" >
+					</div>
+				</div>
+			</div>
+			<div class="form-group row">
+				<div class="col-auto ml-auto" style="text-align: left;">
+					<button type="submit" class="btn btn-success">Change Status</button>
+					<button type="reset" data-remodal-action="cancel" class="btn btn-danger ml-auto">Close</button>
+				</div>
+			</div>
+		</form>			
+	</div>
+</div>
 @endsection

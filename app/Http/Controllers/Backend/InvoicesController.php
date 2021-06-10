@@ -425,5 +425,15 @@ class InvoicesController extends Controller
 		}
 
 	}
+	public function changeInvoiceStatus(Request $request)
+	{
+		// dd($request->all());
+		$invoice = Invoice::find($request->id);
+		// dd($invoice);
+		$invoice->invoiceStatus = $request->invoiceStatus;
+		$invoice->save();
+		toast('Status changed Successfully!','success','top-right')->autoclose(3500);
+		return Redirect::to('invoice');
+	}
 
 }
