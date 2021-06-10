@@ -43,6 +43,7 @@
 	<link rel="stylesheet" href="{{ asset('css/dev-sign/style.css') }}">
 	<link rel="stylesheet" href="{{ asset('css/invoice-table.css') }}">
 	<link rel="stylesheet" href="{{ asset('css/jquery.dataTables.min.css') }}">
+	<link rel="stylesheet" href="https://cdn.datatables.net/buttons/1.7.1/css/buttons.dataTables.min.css">
 
 	<!-- Favicon-->
 	<link rel="shortcut icon" href="img/favicon.ico">
@@ -216,7 +217,15 @@
 			</div>
 		</div>
 		<!-- JavaScript files-->		
+
 		<script src="{{ asset('js/jquery.dataTables.min.js') }}"></script>
+		<script src="https://cdn.datatables.net/buttons/1.7.1/js/dataTables.buttons.min.js"></script>
+
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.1.3/jszip.min.js" ></script>
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.53/pdfmake.min.js" ></script>
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.53/vfs_fonts.js" ></script>
+		<script src="https://cdn.datatables.net/buttons/1.7.1/js/buttons.html5.min.js" ></script>
+		<script src="https://cdn.datatables.net/buttons/1.7.1/js/buttons.print.min.js" ></script>
 		<script src="{{ asset('fw/popper.js/umd/popper.min.js') }}"></script>
 		<script src="{{ asset('fw/bootstrap/js/bootstrap.min.js') }}"></script>
 		<script src="{{ asset('fw/numeric/jquery-numeric-1.3.1.js') }}"></script>

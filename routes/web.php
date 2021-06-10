@@ -72,6 +72,11 @@ Route::get('/invoices/select_product/{description}', 'Backend\InvoicesController
     'as'            => 'SelectProduct',
 ])->middleware('AuthUser');
 
+Route::post('/payOutstandingBalance', [
+    'as'    => 'PayOutstandingBalance',
+    'uses'  => 'Backend\ContactsController@payOutstandingBalance',
+])->middleware('AuthUser');
+
 Route::get('/invoices/print/{id}/{copy}', [
     'as'    => 'PrintInvoice',
     'uses'  => 'Backend\InvoicesController@printinvoice',

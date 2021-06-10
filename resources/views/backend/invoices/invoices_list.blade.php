@@ -26,6 +26,7 @@
 										<th> @lang('laryl-invoices.table.issueDate') </th>
 										<th> @lang('laryl-invoices.table.dueDate') </th>
 										<th> @lang('laryl-invoices.table.customer') </th>
+										<th> @lang('laryl-invoices.table.invoiceStatus') </th>
 										<th> @lang('laryl-invoices.table.grandValue') </th>
 										<th> @lang('laryl-invoices.table.options') </th>
 									</tr>
@@ -44,6 +45,7 @@
 												<td class="t-cap">{{$invoice['issueDate']}}</td>
 												<td class="t-up">{{$invoice['dueDate']}}</td>
 												<td class="t-up">{{$invoice['customer']['name']}}</td>
+												<td class="t-up">{{$invoice['invoiceStatus']}}</td>
 												<td class="t-cap">Rs. {{$invoice['grandValue']}}</td>
 												<td>
 

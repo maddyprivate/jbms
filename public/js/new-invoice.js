@@ -76,6 +76,7 @@
 	}).on('selected.xdsoft', function(e, datum){ //on select of a customer in the select a customer modal
 
 		//fill in the customer details on page
+		$('input#customerId').val(datum.id);
 		$('input#customerGstin').val(datum.gstin);
 		$('input#customerMobile').val(datum.mobile);
 		$('select#placeOfSupply').attr('data-state', datum.state);

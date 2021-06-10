@@ -117,8 +117,7 @@ class InvoicesController extends Controller
 			), 400);
 
 		} else {
-
-			$invoiceData = $request->except('customer', 'invoiceProducts', '_token');
+			$invoiceData = $request->except('customer', 'invoiceProducts', '_token','customerId');
 			$invoiceCustomerData = $request->input('customer');
 			$invoiceProductsData = $request->input('invoiceProducts');
 
@@ -138,7 +137,10 @@ class InvoicesController extends Controller
 			$deleteMissingProducts = InvoiceProduct::where('invoice_id', $invoice['id'])
 						->whereNotIn('invoiceSerial', $invoiceProductIds)
 						->delete();
-
+			$customer = Contact::find($request->input('customerId'));
+			$balance = $customer->outstandingBalance+$request->input('grandValue');
+			$customer->outstandingBalance = $balance;
+			$customer->save();
 			return Response::json(array('status' => 1), 200);
 		}
 	}
