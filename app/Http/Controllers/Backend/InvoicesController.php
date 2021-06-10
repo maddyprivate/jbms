@@ -433,7 +433,7 @@ class InvoicesController extends Controller
 		$invoice->invoiceStatus = $request->invoiceStatus;
 		$invoice->save();
 		toast('Status changed Successfully!','success','top-right')->autoclose(3500);
-		return Redirect::to('invoice');
+		return Redirect::to('invoices');
 	}
 
 }
