@@ -196,7 +196,7 @@
 						<div class="container-fluid">
 							<div class="row">
 								<div class="col-sm-6">
-									<p>RadianceLPG Petrochem PVT. LTD. © 
+									<p>JAy Bhagwan Buliding Material Suppliers. © 
 										<a class="designer" href="http://RadianceLPG.com" target=_blank>
 											<!-- <span class="icon-designer">
 												<span class="path2"></span>
@@ -217,7 +217,7 @@
 			</div>
 		</div>
 		<!-- JavaScript files-->		
-
+		<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
 		<script src="{{ asset('js/jquery.dataTables.min.js') }}"></script>
 		<script src="https://cdn.datatables.net/buttons/1.7.1/js/dataTables.buttons.min.js"></script>
 

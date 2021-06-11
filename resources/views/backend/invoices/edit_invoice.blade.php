@@ -186,7 +186,6 @@
 																<th rowspan=1>Discount</th>
 																<th rowspan=1 colspan=2>Taxable</th>
 																<th rowspan=1 colspan=2>Values</th>
-																<th rowspan=1 colspan=3>DC Details</th>
 															</tr>
 															<tr>
 																<th rowspan=1>
@@ -211,9 +210,6 @@
 																<th rowspan=1>Rate</th>
 																<th rowspan=1>CGST</th>
 																<th rowspan=1>SGST</th>
-																<th rowspan=1>Date</th>
-																<th rowspan=1>Vehicle No.</th>
-																<th rowspan=1>DC No.</th>
 															</tr>
 														</thead>
 														<tbody>
@@ -276,12 +272,6 @@
 																<td class="product-detail-cell readonly-cell" id="sgstValue">
 																	<input type="text" class="table-cell-input" id="sgstValue" name="invoiceProducts[{{$invoiceProduct['invoiceSerial']}}][sgstValue]" value="{{$invoiceProduct['sgstValue']}}" readonly>
 																	<input type="text" class="table-cell-input " id="sgstRate" name="invoiceProducts[{{$invoiceProduct['invoiceSerial']}}][sgstRate]" value="{{$invoiceProduct['sgstRate']}}" readonly> </td>
-																<td class="product-detail-cell " id="dcDate">
-																	<input type="text" class="table-cell-input" id="dcDate" name="invoiceProducts[{{$invoiceProduct['invoiceSerial']}}][dcDate]" value="{{$invoiceProduct['dcDate']}}" > </td>
-																<td class="product-detail-cell " id="vehicleNo">
-																	<input type="text" class="table-cell-input" id="vehicleNo" name="invoiceProducts[{{$invoiceProduct['invoiceSerial']}}][vehicleNo]" value="{{$invoiceProduct['vehicleNo']}}" > </td>
-																<td class="product-detail-cell " id="dcNo">
-																	<input type="text" class="table-cell-input" id="dcNo" name="invoiceProducts[{{$invoiceProduct['invoiceSerial']}}][dcNo]" value="{{$invoiceProduct['dcNo']}}" > </td>
 																</tr>
 
 															@endforeach
@@ -298,9 +288,6 @@
 																</td>
 																<td class="invoice-total-cell readonly-cell" id="sgstValue">
 																	<input type="text" 	class="table-cell-total" id="sgstValue" name="totalSgstvalue" value="{{$invoice->totalSgstValue}}" readonly>
-																</td>
-																<td colspan="1" class="invoice-total-cell readonly-cell"></td>
-																<td class="invoice-total-cell readonly-cell" id="cessValue">
 																</td>
 															</tr>
 														</tbody>

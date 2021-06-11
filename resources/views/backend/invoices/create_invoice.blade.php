@@ -213,7 +213,6 @@
 																<th rowspan=1>Discount</th>
 																<th rowspan=1 colspan=2>Taxable</th>
 																<th rowspan=1 colspan=2>Values</th>
-																<th rowspan=1 colspan=3>DC Details</th>
 															</tr>
 															<tr>
 																<th rowspan=1>
@@ -238,9 +237,6 @@
 																<th rowspan=1>Rate</th>
 																<th rowspan=1>CGST</th>
 																<th rowspan=1>SGST</th>
-																<th rowspan=1>Date</th>
-																<th rowspan=1>Vehicle No.</th>
-																<th rowspan=1>DC No.</th>
 															</tr>
 														</thead>
 														<tbody id="product-tbody">
@@ -257,10 +253,7 @@
 																</td>
 																<td class="invoice-total-cell readonly-cell" id="sgstValue">
 																	<input type="text" 	class="table-cell-total" id="sgstValue" name="totalSgstvalue" value="0.00" readonly>
-																</td>
-																<td colspan="1" class="invoice-total-cell readonly-cell"></td>
-																<td class="invoice-total-cell readonly-cell" id="cessValue">
-																</td><td colspan="1" class=""></td>
+																</td>	
 															</tr>
 														</tbody>
 													</table>

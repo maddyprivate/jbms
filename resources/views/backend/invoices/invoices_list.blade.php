@@ -19,7 +19,7 @@
 					</div>
 					<div class="card-body">
 						<div class="table-responsive">
-							<table class="table">
+							<table class="table" id="invoiceTable">
 								<thead>
 									<tr>
 										<th> @lang('laryl-invoices.table.#') </th>
@@ -42,8 +42,8 @@
 										@foreach($invoices as $invoice)
 											<tr>
 												<th class="scope-row">{{$i}}</th>
-												<td class="t-cap">{{$invoice['issueDate']}}</td>
-												<td class="t-up">{{$invoice['dueDate']}}</td>
+												<td class="t-cap">{{date('d/m/Y', strtotime($invoice['issueDate']))}}</td>
+												<td class="t-up">{{date('d/m/Y', strtotime($invoice['dueDate']))}}</td>
 												<td class="t-up">{{$invoice['customer']['name']}}</td>
 												<td class="t-up">{{$invoice['invoiceStatus']}}</td>
 												<td class="t-cap">Rs. {{$invoice['grandValue']}}</td>
@@ -122,4 +122,41 @@
 		</form>			
 	</div>
 </div>
+@endsection
+@section('footer')
+<script type="text/javascript">
+	$(document).ready(function() {
+		$('#invoiceTable').DataTable( {
+			dom: 'Bfrtip',
+			buttons: [
+			'copyHtml5',
+			'excelHtml5',
+			'csvHtml5',
+			'pdfHtml5'
+			]
+		} );
+		/*$('#transTable').DataTable({
+			initComplete: function () {
+				this.api().columns().every( function () {
+					var column = this;
+					var select = $('<select><option value=""></option></select>')
+					.appendTo( $(column.footer()).empty() )
+					.on( 'change', function () {
+						var val = $.fn.dataTable.util.escapeRegex(
+							$(this).val()
+							);
+						
+						column
+						.search( val ? '^'+val+'$' : '', true, false )
+						.draw();
+					} );
+					
+					column.data().unique().sort().each( function ( d, j ) {
+						select.append( '<option value="'+d+'">'+d+'</option>' )
+					} );
+				} );
+			}
+		});*/
+	} );
+</script>
 @endsection
