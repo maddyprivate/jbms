@@ -60,6 +60,7 @@
 	<!--[if lt IE 9]>
 				<script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
 				<script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script><![endif]-->
+					@yield('header')
 	<body>
 		<div class="page">
 			<!-- Main Navbar-->
@@ -136,6 +137,11 @@
 								<i class="fas fa-file-invoice-dollar"></i>Invoices </a>
 						</li>
 						
+						<li class="{{ isActiveRoute('Dcs.*') }}">
+							<a class="nav-link" href="{{ route('Dcs.dcs.index') }}">
+								<i class="fas fa-file-invoice-dollar"></i>Dc </a>
+						</li>
+						
 						<li class="{{ isActiveRoute('Settings.*') }}">
 							<a href="#deedown" aria-expanded="false" data-toggle="collapse">
 								<i class="fa fa-cog"></i>Settings</a>
@@ -196,7 +202,7 @@
 						<div class="container-fluid">
 							<div class="row">
 								<div class="col-sm-6">
-									<p>JAy Bhagwan Buliding Material Suppliers. © 
+									<p>Jay Bhagwan Buliding Material Suppliers. © 
 										<a class="designer" href="http://RadianceLPG.com" target=_blank>
 											<!-- <span class="icon-designer">
 												<span class="path2"></span>

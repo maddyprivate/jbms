@@ -72,6 +72,13 @@ Route::get('/invoices/select_product/{description}', 'Backend\InvoicesController
     'as'            => 'SelectProduct',
 ])->middleware('AuthUser');
 
+Route::get('/dcs/select_customer/{customerName}', 'Backend\DcsController@selectCustomer', [
+    'as'            => 'SelectCustomer',
+])->middleware('AuthUser');
+Route::get('/dcs/select_product/{description}', 'Backend\InvoicesController@selectProduct', [
+    'as'            => 'SelectProduct',
+])->middleware('AuthUser');
+
 Route::post('/payOutstandingBalance', [
     'as'    => 'PayOutstandingBalance',
     'uses'  => 'Backend\ContactsController@payOutstandingBalance',
@@ -89,6 +96,16 @@ Route::get('/invoices/print/{id}/{copy}', [
 
 Route::resource('invoices', 'Backend\InvoicesController', [
     'as'            => 'Invoices',
+])->middleware('AuthUser');
+
+
+Route::get('/dcs/print/{id}/{copy}', [
+    'as'    => 'PrintDc',
+    'uses'  => 'Backend\DcsController@printdc',
+])->middleware('AuthUser');
+
+Route::resource('dcs', 'Backend\DcsController', [
+    'as'            => 'Dcs',
 ])->middleware('AuthUser');
 
 Route::resource('expenses', 'Backend\ExpensesController', [
