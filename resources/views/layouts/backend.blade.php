@@ -124,24 +124,62 @@
 								<i class="fas fa-home"></i>Dashboard</a>
 						</li>
 						@if(Auth::user()->hasAnyRole(['admin', 'user']))
-						<li class="{{ isActiveRoute('Contacts.*') }}">
-							<a class="nav-link" href="{{ route('Contacts.contacts.index') }}">
-								<i class="far fa-address-book"></i>Contacts </a>
-						</li>
 						<li class="{{ isActiveRoute('Products.*') }}">
 							<a class="nav-link" href="{{ route('Products.products.index') }}">
 								<i class="fas fa-cookie-bite"></i>Products </a>
 						</li>
+						<li class="{{ isActiveRoute('Contacts.*') }}">
+							<a href="#condown" aria-expanded="false" data-toggle="collapse">
+								<i class="fas fa-file-invoice-dollar"></i>Contacts
+							</a>
+							<ul id="condown" class="collapse list-unstyled ">
+								<li>
+									<a href="{{ url('customers') }}">Customers</a>
+								</li>
+								<li>
+									<a href="{{ url('dealers') }}">Dealers</a>
+								</li>
+							</ul>
+						</li>
+						<li class="{{ isActiveRoute('Purchases.*') }}">
+							<a href="#purdown" aria-expanded="false" data-toggle="collapse">
+								<i class="fas fa-file-invoice-dollar"></i>Purchases
+							</a>
+							<ul id="purdown" class="collapse list-unstyled ">
+								<li>
+									<a href="{{ route('Purchases.purchases.create') }}">Create Purchase</a>
+								</li>
+								<li>
+									<a href="{{ route('Purchases.purchases.index') }}">List Purchase</a>
+								</li>
+							</ul>
+						</li>
 						<li class="{{ isActiveRoute('Invoices.*') }}">
-							<a class="nav-link" href="{{ route('Invoices.invoices.index') }}">
-								<i class="fas fa-file-invoice-dollar"></i>Invoices </a>
+							<a href="#invdown" aria-expanded="false" data-toggle="collapse">
+								<i class="fas fa-file-invoice-dollar"></i>Invoices
+							</a>
+							<ul id="invdown" class="collapse list-unstyled ">
+								<li>
+									<a href="{{ route('Invoices.invoices.create') }}">Create Invoice</a>
+								</li>
+								<li>
+									<a href="{{ route('Invoices.invoices.index') }}">List Invoice</a>
+								</li>
+							</ul>
 						</li>
-						
 						<li class="{{ isActiveRoute('Dcs.*') }}">
-							<a class="nav-link" href="{{ route('Dcs.dcs.index') }}">
-								<i class="fas fa-file-invoice-dollar"></i>Dc </a>
-						</li>
-						
+							<a href="#dcdown" aria-expanded="false" data-toggle="collapse">
+								<i class="fas fa-file-invoice-dollar"></i>Dcs
+							</a>
+							<ul id="dcdown" class="collapse list-unstyled ">
+								<li>
+									<a href="{{ route('Dcs.dcs.create') }}">Create Dc</a>
+								</li>
+								<li>
+									<a href="{{ route('Dcs.dcs.index') }}">List Dc</a>
+								</li>
+							</ul>
+						</li>						
 						<li class="{{ isActiveRoute('Settings.*') }}">
 							<a href="#deedown" aria-expanded="false" data-toggle="collapse">
 								<i class="fa fa-cog"></i>Settings</a>
