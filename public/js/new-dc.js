@@ -211,7 +211,7 @@
 		add_empty_productrow()
 	})
 
-	tableFixed.on('click', 'a.delete-row-link', function(e){
+	tableScrollable.on('click', 'a.delete-row-link', function(e){
 		e.preventDefault();
 
 		var rowId = $(this).parents('tr.product-details-row-fixed').attr('row-index');

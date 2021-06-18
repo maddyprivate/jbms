@@ -53,9 +53,9 @@
 															@lang('laryl.buttons.show')
 														</a>
 
-														<!-- <a class="btn btn-sm btn-warning mb-2 mb-sm-0" href="{{ route('Dcs.dcs.edit', $dc['id'])  }}" data-toggle="tooltip" title="@lang('laryl.tooltips.edit')">
+														<a class="btn btn-sm btn-warning mb-2 mb-sm-0" href="{{ route('Dcs.dcs.edit', $dc['id'])  }}" data-toggle="tooltip" title="@lang('laryl.tooltips.edit')">
 															@lang('laryl.buttons.edit')
-														</a> -->
+														</a>
 														<a class="btn btn-sm btn-primary mb-2 mb-sm-0" data-remodal-target="dcStatusChange" href="javascript:;"  title="@lang('laryl.tooltips.payment')" onclick="$('#dcStatusChange').val('{{$dc['dcStatus']}}');$('#id').val('{{$dc['id']}}');">
 															@lang('laryl.buttons.payment')
 														</a>
