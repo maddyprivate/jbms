@@ -174,7 +174,6 @@
 																		<th >DC Date</th>
 																		<th>Vehicle No.</th>
 																		<th>DC No.</th>
-																		<th></th>
 																	</tr>
 																</thead>
 																<tbody>
@@ -215,7 +214,6 @@
 																		<td class="product-detail-cell" id="dcNo">
 																			<input type="text" class="table-cell-input" id="dcNo" name="dcProducts[{{$dcProduct['dcSerial']}}][dcNo]" value="{{$dcProduct['dcNo']}}">
 																		</td>
-																		
 																	</tr>
 																	@endforeach
 																	<tr class="dc-totals-row-scrollable">
