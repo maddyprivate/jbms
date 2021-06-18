@@ -71,17 +71,17 @@
 	                                <tr class="triple_details">
 	                                    <td>Challan No</td>
 	                                    <td>:</td>
-	                                    <td>{{$serialPrefix.$serialNumber}}</td>
+	                                    <td><b>{{$serialPrefix.$serialNumber}}</b></td>
 	                                </tr>
 	                                <tr>
 	                                    <td>Delivery Date</td>
 	                                    <td>:</td>
-	                                    <td></td>
+	                                    <td>{{$issueDate}}</td>
 	                                </tr>
 	                                <tr>
 	                                    <td>Place Of Supply</td>
 	                                    <td>:</td>
-	                                    <td>{{$placeOfSupply}}</td>
+	                                    <td><b>{{$placeOfSupply}}</b></td>
 	                                </tr>
 	                            </tbody>
 	                        </table>
@@ -131,7 +131,7 @@
 									<td>Bill To :</td>
 								</tr>
 								<tr>
-									<td colspan="3">{{$customer['name']}}<br />{{$customer['billingAddress']}}<br /></td>
+									<td colspan="3"><b>{{$customer['name']}}<br />{{$customer['billingAddress']}}<br /></b></td>
 								</tr>
 								<tr class="">
 									<td>GSTIN:</td>
@@ -189,6 +189,7 @@
 				if(count($product)==3) $height = 320;
 				if(count($product)==2) $height = 340;
 				if(count($product)==1) $height = 360;
+				if(count($product)<1) $height = 360;
 				@endphp
 	            <tr class="product_row">
 	            	<td height="{{$height}}px"></td>
