@@ -71,7 +71,7 @@
 										<tr class="triple_details">
 											<td>Invoice No</td>
 											<td>:</td>
-											<td>{{$serialPrefix.$serialNumber}}</td>
+											<td><b>{{$serialPrefix.$serialNumber}}</b></td>
 										</tr>
 										<tr>
 											<td>Invoice Date</td>
@@ -81,7 +81,7 @@
 										<tr>
 											<td>Place Of Supply</td>
 											<td>:</td>
-											<td>{{$placeOfSupply}}</td>
+											<td><b>{{$placeOfSupply}}</b></td>
 										</tr>
 										<tr>
 											<td>Due Date</td>
@@ -136,7 +136,7 @@
 	            					<td>Bill To :</td>
 	            				</tr>
 	            				<tr>
-	            					<td colspan="3">{{$customer['name']}}<br />{{$customer['billingAddress']}}<br /></td>
+	            					<td colspan="3"><b>{{$customer['name']}}<br />{{$customer['billingAddress']}}</b></td>
 	            				</tr>
 	            				<tr class="">
 	            					<td>GSTIN:</td>
