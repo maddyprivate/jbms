@@ -208,17 +208,17 @@
 	    			<td>{{$prod['grossValue']}}</td>
 	    		</tr> 
 	    		@endforeach
-	    		@php
-	    		if(count($product)>8)  $height = 50;
-	    		if(count($product)==8) $height = 160;
-	    		if(count($product)==7) $height = 180;
-	    		if(count($product)==6) $height = 200;
-	    		if(count($product)==5) $height = 220;
-	    		if(count($product)==4) $height = 240;
-	    		if(count($product)==3) $height = 260;
-	    		if(count($product)==2) $height = 280;
-	    		if(count($product)==1) $height = 300;
-	    		@endphp
+				@php
+				if(count($product)>8)  $height = 200;
+				if(count($product)==8) $height = 220;
+				if(count($product)==7) $height = 240;
+				if(count($product)==6) $height = 260;
+				if(count($product)==5) $height = 280;
+				if(count($product)==4) $height = 300;
+				if(count($product)==3) $height = 320;
+				if(count($product)==2) $height = 340;
+				if(count($product)<=1) $height = 360;
+				@endphp
 	    		<tr class="product_row">
 	    			<td height="{{$height}}px"></td>
 	    			<td></td>
