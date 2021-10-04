@@ -40,7 +40,7 @@
 									Dc Date : {{$dc->issueDate}} <br />
 									Reference No : <br />
 									Place Of Supply : {{$dc->placeOfSupply}} <br />
-									Due Date : {{$dc->dueDate}} <br />
+									<!-- Due Date : {{$dc->dueDate}} <br /> -->
 									<br />
 									Transporter Name :<br />
 									GR/RW/AWB No. :<br />

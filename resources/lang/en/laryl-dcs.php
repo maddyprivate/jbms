@@ -18,12 +18,12 @@ return [
 	],
 
 	'table' => [
-		'#'					=> '#',
+		'#'					=> 'Sr. No.',
 		'issueDate'			=> 'DC Date',
 		'dueDate'			=> 'Due Date',
 		'dcStatus'			=> 'Dc Status',
 		'grandValue'		=> 'Grand Total',
-		'customer'			=> 'Customer',
+		'customer'			=> 'Customers',
 		'options'			=> 'Options',
 	],
 

@@ -36,7 +36,17 @@ class DcsController extends Controller
 
 		return view('backend.dcs.dcs_list', compact('dcs'));
 	}
+		/**
+	 * Display a listing of the resource.
+	 *
+	 * @return \Illuminate\Http\Response
+	 */
+	public function viewAllDcs()
+	{
+		$dcs = Dc::get();
 
+		return view('backend.dcs.all_dcs_list', compact('dcs'));
+	}
 	/**
 	 * Show the form for creating a new resource.
 	 *

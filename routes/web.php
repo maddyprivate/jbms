@@ -98,6 +98,11 @@ Route::get('/view-all-purchases', [
     'uses'  => 'Backend\PurchasesController@ViewAllPurchases',
 ])->middleware('AuthUser');
 
+Route::get('/view-all-dcs', [
+    'as'    => 'ViewAllDcs',
+    'uses'  => 'Backend\DcsController@ViewAllDcs',
+])->middleware('AuthUser');
+
 Route::resource('invoices', 'Backend\InvoicesController', [
     'as'            => 'Invoices',
 ])->middleware('AuthUser');

@@ -133,7 +133,7 @@
 															<span id="billingaddress_edit" class="col-auto align-self-center ml-auto"><a data-remodal-target="editBillingAddress" href="javascript:;">Edit</a></span>
 
 															<div class="col-md-12">
-																<textarea id="billingAddress" rows=4 class="form-control autosize t-cap" name="customer[billingAddress]" readonly> {{ $dc->customer['billingAddress'] }} </textarea>
+																<textarea id="billingAddress" rows=4 class="form-control autosize t-cap" name="customer[billingAddress]" readonly>{{ $dc->customer['billingAddress'] }} </textarea>
 															</div>
 														</div>
 													</div>
@@ -167,7 +167,7 @@
 															<table id="table" class="table text-center">
 																<thead>
 																	<tr>
-																		<th>#</th>
+																		<th>Sr.No.</th>
 																		<th>Product Description</th>
 																		<th>Qty</th>
 																		<th>Unit</th>

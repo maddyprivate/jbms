@@ -34,7 +34,7 @@
 								<tbody>
 									@php
 										$dc_array = $dcs->toArray();
-										$i = $dc_array['from'];
+										$i = 1;
 									@endphp
 
 									@if(count($dcs) > 0)
@@ -80,15 +80,9 @@
 						</div> 
 
 						<div class="row mt-3">
-							<div class="col d-none d-sm-block">
-								{{ $dcs->render() }}
-							</div>
-
-							<div class="col d-sm-none">
-								{{ $dcs->links('pagination::simple-bootstrap-4') }}
-							</div>
+							
 							<div class="col-md-2">
-								<a href="{{url('view-all-dcs')}}" class="btn btn-sm btn-primary"> View All</a>
+								<a href="{{url('dcs')}}" class="btn btn-sm btn-primary"> View All</a>
 							</div>
 						</div>
 
