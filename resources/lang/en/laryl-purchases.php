@@ -24,6 +24,7 @@ return [
 		'purchaseStatus'		=> 'Purchase Status',
 		'grandValue'		=> 'Grand Total',
 		'dealer'			=> 'Dealer',
+		'billNo'			=> 'Bill No.',
 		'options'			=> 'Options',
 	],
 
@@ -41,6 +42,7 @@ return [
 			'shippingAddress'	=> 'Shipping Address',
 			'placeOfSupply'		=> 'Place of Supply',
 			'discountRate'		=> 'Discount (%)',
+			'billNo'		=> 'Bill No.',
 			'purchaseStatus'		=> 'Purchase Status',
 		]
 	],

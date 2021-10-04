@@ -36,7 +36,17 @@ class PurchasesController extends Controller
 
 		return view('backend.purchases.purchases_list', compact('purchases'));
 	}
+		/**
+	 * Display a listing of the resource.
+	 *
+	 * @return \Illuminate\Http\Response
+	 */
+	public function viewAllPurchases()
+	{
+		$purchases = Purchase::get();
 
+		return view('backend.purchases.all_purchases_list', compact('purchases'));
+	}
 	/**
 	 * Show the form for creating a new resource.
 	 *

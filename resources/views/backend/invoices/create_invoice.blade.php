@@ -65,7 +65,7 @@
 											@endif
 										</div>
 									</div>
-									<div class="col-sm-6 col-md-3">
+									<!-- <div class="col-sm-6 col-md-3">
 										<div class="row">
 											<label for="dueDate" class="col-md-12 col-form-label">@lang('laryl-invoices.form.label.dueDate')</label>
 					
@@ -80,8 +80,8 @@
 												</span>
 											@endif
 										</div>
-									</div>
-									<div class="col-sm-6 col-md-3">
+									</div> -->
+									<div class="col-sm-6">
 										<div class="row">
 											<label for="placeOfSupply" class="col-md-12 col-form-label">@lang('laryl-invoices.form.label.placeOfSupply')</label>
 					

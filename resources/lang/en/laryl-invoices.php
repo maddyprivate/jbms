@@ -18,12 +18,12 @@ return [
 	],
 
 	'table' => [
-		'#'					=> '#',
-		'issueDate'			=> 'Inv. Date',
+		'#'					=> 'Sr.No.',
+		'issueDate'			=> 'Invoice Date',
 		'dueDate'			=> 'Due Date',
 		'invoiceStatus'		=> 'Invoice Status',
 		'grandValue'		=> 'Grand Total',
-		'customer'			=> 'Customer',
+		'customer'			=> 'Customers',
 		'options'			=> 'Options',
 	],
 

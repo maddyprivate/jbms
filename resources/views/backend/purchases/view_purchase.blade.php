@@ -46,7 +46,7 @@
 									Purchase Date : {{$purchase->issueDate}} <br />
 									Reference No : <br />
 									Place Of Supply : {{$purchase->placeOfSupply}} <br />
-									Due Date : {{$purchase->dueDate}} <br />
+									<!-- Due Date : {{$purchase->dueDate}} <br /> -->
 									<br />
 									Transporter Name :<br />
 									GR/RW/AWB No. :<br />

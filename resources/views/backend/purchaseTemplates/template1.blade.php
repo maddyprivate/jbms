@@ -83,11 +83,11 @@
 											<td>:</td>
 											<td>{{$placeOfSupply}}</td>
 										</tr>
-										<tr>
+										<!-- <tr>
 											<td>Due Date</td>
 											<td>:</td>
 											<td>{{$dueDate}}</td>
-										</tr>
+										</tr> -->
 									</tbody>
 								</table>
 							</div>
@@ -163,7 +163,7 @@
 	    <table class="pricing_table">
 	    	<thead>
 	    		<tr class="pricing_thr">
-	    			<th>#</th>
+	    			<th>Sr.No.</th>
 	    			<th>Description</th>
 	    			<th>HSN/SAC</th>
 	    			<th>Qty. Unit</th>
