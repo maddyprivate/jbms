@@ -3,11 +3,11 @@
 namespace App\Http\Controllers\Backend;
 
 use App\Account;
-use App\Invoice;
-use App\InvoicePayment;
-use App\InvoiceCustomer;
-use App\InvoiceProduct;
-use App\InvoiceSetting;
+use App\CreditNote;
+use App\CreditNotePayment;
+use App\CreditNoteCustomer;
+use App\CreditNoteProduct;
+use App\CreditNoteSetting;
 use App\ProfileSetting;
 use App\Contact;
 use App\Product;
@@ -22,11 +22,11 @@ use PDF;
 use Illuminate\Http\Request;
 use App\Http\Controllers\AceController\Controller;
 
-class InvoicesController extends Controller
+class CreditNotesController extends Controller
 {
 	public function __construct(Request $request)
 	{
-		$request->route()->setParameter('page-heading', 'Invoices');		
+		$request->route()->setParameter('page-heading', 'CreditNotes');		
 	}
 	/**
 	 * Display a listing of the resource.
@@ -35,20 +35,20 @@ class InvoicesController extends Controller
 	 */
 	public function index()
 	{
-		$invoices = Invoice::orderBy('id','desc')->paginate(10);
+		$creditNotes = CreditNote::orderBy('id','desc')->paginate(10);
 		$accounts = Account::get();
-		return view('backend.invoices.invoices_list', compact('invoices','accounts'));
+		return view('backend.creditNotes.creditNotes_list', compact('creditNotes','accounts'));
 	}
 	/**
 	 * Display a listing of the resource.
 	 *
 	 * @return \Illuminate\Http\Response
 	 */
-	public function viewAllInvoices()
+	public function viewAllCreditNotes()
 	{
-		$invoices = Invoice::get();
+		$creditNotes = CreditNote::get();
 
-		return view('backend.invoices.all_invoices_list', compact('invoices'));
+		return view('backend.creditNotes.all_creditNotes_list', compact('creditNotes'));
 	}
 
 	/**
@@ -58,43 +58,43 @@ class InvoicesController extends Controller
 	 */
 	public function create()
 	{
-		$invoiceSettings = InvoiceSetting::find(1);
+		$creditNoteSettings = CreditNoteSetting::find(1);
 
-		$invoice['serialPrefix'] = $invoiceSettings['serialPrefix'];
+		$creditNote['serialPrefix'] = $creditNoteSettings['serialPrefix'];
 
-		// Finding the invoices with set prefix
-		$invoicesCreated = Invoice::where('serialPrefix', $invoiceSettings['serialPrefix'])->get();
-		// $invoicesCreatedCount = Invoice::count('serialPrefix', $invoiceSettings['serialPrefix']);
-		$invoicesCreatedCount = $invoicesCreated->count();
+		// Finding the creditNotes with set prefix
+		$creditNotesCreated = CreditNote::where('serialPrefix', $creditNoteSettings['serialPrefix'])->get();
+		// $creditNotesCreatedCount = CreditNote::count('serialPrefix', $creditNoteSettings['serialPrefix']);
+		$creditNotesCreatedCount = $creditNotesCreated->count();
 
-		if($invoicesCreatedCount) {
+		if($creditNotesCreatedCount) {
 
 			// Assuming the last user serial is the the one which is set in settings
-			$serialNumberLastUsed = $invoiceSettings['serialNumberStart'];
+			$serialNumberLastUsed = $creditNoteSettings['serialNumberStart'];
 
 			// Finding the greatest number under used serials with the prefix from settings
-			foreach($invoicesCreated as $invoiceCreated) {
-				if($invoiceCreated['serialNumber'] > $serialNumberLastUsed) {
-					$serialNumberLastUsed = $invoiceCreated['serialNumber'];
+			foreach($creditNotesCreated as $creditNoteCreated) {
+				if($creditNoteCreated['serialNumber'] > $serialNumberLastUsed) {
+					$serialNumberLastUsed = $creditNoteCreated['serialNumber'];
 				}
 			}
 
-			$invoice['serialNumber'] = str_pad(intval($serialNumberLastUsed) + 1, strlen($invoiceSettings['serialNumberStart']), '0', STR_PAD_LEFT);
+			$creditNote['serialNumber'] = str_pad(intval($serialNumberLastUsed) + 1, strlen($creditNoteSettings['serialNumberStart']), '0', STR_PAD_LEFT);
 
 		} else {
 
-			$invoice['serialNumber'] = $invoiceSettings['serialNumberStart'];
+			$creditNote['serialNumber'] = $creditNoteSettings['serialNumberStart'];
 
 		}
 
 		$profileSettings = ProfileSetting::find(1);
 
-		$invoice['placeOfOrigin'] = $profileSettings['placeOfOrigin'];
-		$invoice['businessName'] = $profileSettings['businessName'];
+		$creditNote['placeOfOrigin'] = $profileSettings['placeOfOrigin'];
+		$creditNote['businessName'] = $profileSettings['businessName'];
 
-		$invoice = (object) $invoice;
-		clock($invoice);
-		return view('backend.invoices.create_invoice', compact('invoice'));
+		$creditNote = (object) $creditNote;
+		clock($creditNote);
+		return view('backend.creditNotes.create_creditNote', compact('creditNote'));
 	}
 
 	/**
@@ -110,14 +110,14 @@ class InvoicesController extends Controller
 		$attributeNames = array(
 			'customer.name' => 'Customer Name',
 			'customer.mobile' => 'Customer Mobile',
-			'invoiceProducts.*.description' => 'invoice product description',
+			'creditNoteProducts.*.description' => 'creditNote product description',
 		 );
 		
 		$rules = array(
 			'placeOfSupply'				=> 'required',
 			'customer.name'				=> 'required',
 			'customer.mobile'			=> 'required|regex:/\+91[[:space:]]\d{10}/',
-			'invoiceProducts.*.description'	=> 'required',
+			'creditNoteProducts.*.description'	=> 'required',
 		);
 
 		$validator = Validator::make($request->all(), $rules);
@@ -131,30 +131,30 @@ class InvoicesController extends Controller
 			), 400);
 
 		} else {
-			$invoiceData = $request->except('customer', 'invoiceProducts', '_token','customerId');
-			$invoiceData['pendingBalance'] = $invoiceData['grandValue'];
-			// dd($invoiceData);
-			$invoiceCustomerData = $request->input('customer');
-			$invoiceProductsData = $request->input('invoiceProducts');
+			$creditNoteData = $request->except('customer', 'creditNoteProducts', '_token','customerId');
+			$creditNoteData['pendingBalance'] = $creditNoteData['grandValue'];
+			$creditNoteCustomerData = $request->input('customer');
+			$creditNoteProductsData = $request->input('creditNoteProducts');
 
-			$invoice = Invoice::updateOrCreate(['serialPrefix' => $request->input('serialPrefix'), 'serialNumber' => $request->input('serialNumber')], $invoiceData);
-			$invoice->save();
+			// dd($creditNoteData,$creditNoteCustomerData,$creditNoteProductsData);
+			$creditNote = CreditNote::updateOrCreate(['serialPrefix' => $request->input('serialPrefix'), 'serialNumber' => $request->input('serialNumber')], $creditNoteData);
+			$creditNote->save();
 
-			$invoiceCustomer = InvoiceCustomer::updateOrCreate(['invoice_id' => $invoice['id']], $invoiceCustomerData);
-			$invoice->customer()->save($invoiceCustomer);
+			$creditNoteCustomer = CreditNoteCustomer::updateOrCreate(['credit_note_id' => $creditNote['id']], $creditNoteCustomerData);
+			$creditNote->customer()->save($creditNoteCustomer);
 
-			foreach($invoiceProductsData as $invoiceProduct){
-				$invoiceProduct = InvoiceProduct::updateOrCreate(['invoice_id' => $invoice['id'], 'invoiceSerial' => $invoiceProduct['invoiceSerial']], $invoiceProduct);
-				$invoice->product()->save($invoiceProduct);
+			foreach($creditNoteProductsData as $creditNoteProduct){
+				$creditNoteProduct = CreditNoteProduct::updateOrCreate(['credit_note_id' => $creditNote['id'], 'creditNoteSerial' => $creditNoteProduct['creditNoteSerial']], $creditNoteProduct);
+				$creditNote->product()->save($creditNoteProduct);
 
-				$invoiceProductIds[] = $invoiceProduct['invoiceSerial'];
+				$creditNoteProductIds[] = $creditNoteProduct['creditNoteSerial'];
 			}
 
-			$deleteMissingProducts = InvoiceProduct::where('invoice_id', $invoice['id'])
-						->whereNotIn('invoiceSerial', $invoiceProductIds)
+			$deleteMissingProducts = CreditNoteProduct::where('credit_note_id', $creditNote['id'])
+						->whereNotIn('creditNoteSerial', $creditNoteProductIds)
 						->delete();
-			$customer = Contact::find($invoiceCustomerData['customerId']);
-			$balance = $customer->outstandingBalance+$request->input('grandValue');
+			$customer = Contact::find($creditNoteCustomerData['customerId']);
+			$balance = $customer->outstandingBalance-$request->input('grandValue');
 			$customer->outstandingBalance = $balance;
 			$customer->save();
 			return Response::json(array('status' => 1), 200);
@@ -169,22 +169,22 @@ class InvoicesController extends Controller
 	 */
 	public function show($id)
 	{
-		$invoice = Invoice::with('customer', 'product')->find($id);
+		$creditNote = CreditNote::with('customer', 'product')->find($id);
 
-		$amountInWords = $this->amountToWords($invoice['grandValue']);
-		$invoice['amountInWords'] = $amountInWords;
+		$amountInWords = $this->amountToWords($creditNote['grandValue']);
+		$creditNote['amountInWords'] = $amountInWords;
 
 		$profileSettings = ProfileSetting::find(1);
-		$invoice['profile'] = $profileSettings;
+		$creditNote['profile'] = $profileSettings;
 
-		$invoiceSettings = InvoiceSetting::find(1);
-		$invoice['invoice'] = $invoiceSettings;
+		$creditNoteSettings = CreditNoteSetting::find(1);
+		$creditNote['creditNote'] = $creditNoteSettings;
 
-		$invoice = (object) $invoice;
+		$creditNote = (object) $creditNote;
 
-		clock($invoice);
+		clock($creditNote);
 
-		return view('backend.invoices.view_invoice', compact('invoice'));
+		return view('backend.creditNotes.view_creditNote', compact('creditNote'));
 	}
 
 	public function amountToWords(float $amount){
@@ -306,19 +306,19 @@ class InvoicesController extends Controller
 	 */
 	public function edit($id)
 	{
-		$invoice = Invoice::with('customer', 'product')->find($id);
+		$creditNote = CreditNote::with('customer', 'product')->find($id);
 
 		$profileSettings = ProfileSetting::find(1);
-		$invoice['profile'] = $profileSettings;
+		$creditNote['profile'] = $profileSettings;
 
-		$invoiceSettings = InvoiceSetting::find(1);
-		$invoice['invoice'] = $invoiceSettings;
+		$creditNoteSettings = CreditNoteSetting::find(1);
+		$creditNote['creditNote'] = $creditNoteSettings;
 
-		$invoice = (object) $invoice;
+		$creditNote = (object) $creditNote;
 
-		clock($invoice);
+		clock($creditNote);
 
-		return view('backend.invoices.edit_invoice', compact('invoice'));
+		return view('backend.creditNotes.edit_creditNote', compact('creditNote'));
 	}
 
 	/**
@@ -333,14 +333,14 @@ class InvoicesController extends Controller
 		$attributeNames = array(
 			'customer.name' => 'Customer Name',
 			'customer.mobile' => 'Customer Mobile',
-			'invoiceProducts.*.description' => 'invoice product description',
+			'creditNoteProducts.*.description' => 'creditNote product description',
 		 );
 		
 		$rules = array(
 			'placeOfSupply'				=> 'required',
 			'customer.name'				=> 'required',
 			'customer.mobile'			=> 'required|regex:/\+91[[:space:]]\d{10}/',
-			'invoiceProducts.*.description'	=> 'required',
+			'creditNoteProducts.*.description'	=> 'required',
 		);
 
 		$validator = Validator::make($request->all(), $rules);
@@ -355,28 +355,28 @@ class InvoicesController extends Controller
 
 		} else {
 
-			$invoiceData = $request->except('customer', 'invoiceProducts', '_token', '_method','customerId');
-			$invoiceCustomerData = $request->input('customer');
-			$invoiceProductsData = $request->input('invoiceProducts');
+			$creditNoteData = $request->except('customer', 'creditNoteProducts', '_token', '_method','customerId');
+			$creditNoteCustomerData = $request->input('customer');
+			$creditNoteProductsData = $request->input('creditNoteProducts');
 
-			$invoice = Invoice::with('customer')->find($id);
-			$prevBalance = $invoice->grandValue;
-			Invoice::whereId($id)->update($invoiceData);
+			$creditNote = CreditNote::with('customer')->find($id);
+			$prevBalance = $creditNote->grandValue;
+			CreditNote::whereId($id)->update($creditNoteData);
 
-			$invoice->customer->update($invoiceCustomerData);
+			$creditNote->customer->update($creditNoteCustomerData);
 
-			foreach($invoiceProductsData as $invoiceProduct){
-				$invoice->product()->where('invoiceSerial', $invoiceProduct['invoiceSerial'])->updateOrCreate(['invoice_id' => $invoice['id'], 'invoiceSerial' => $invoiceProduct['invoiceSerial']], $invoiceProduct);
+			foreach($creditNoteProductsData as $creditNoteProduct){
+				$creditNote->product()->where('creditNoteSerial', $creditNoteProduct['creditNoteSerial'])->updateOrCreate(['credit_note_id' => $creditNote['id'], 'creditNoteSerial' => $creditNoteProduct['creditNoteSerial']], $creditNoteProduct);
 
-				$invoiceProductIds[] = $invoiceProduct['invoiceSerial'];
+				$creditNoteProductIds[] = $creditNoteProduct['creditNoteSerial'];
 			}
 
-			$deleteMissingProducts = InvoiceProduct::where('invoice_id', $invoice['id'])
-						->whereNotIn('invoiceSerial', $invoiceProductIds)
+			$deleteMissingProducts = CreditNoteProduct::where('credit_note_id', $creditNote['id'])
+						->whereNotIn('creditNoteSerial', $creditNoteProductIds)
 						->delete();
 						
-			$customer = Contact::find($invoiceCustomerData['customerId']);
-			$balance = $customer->outstandingBalance+$request->input('grandValue')-$prevBalance;
+			$customer = Contact::find($creditNoteCustomerData['customerId']);
+			$balance = $customer->outstandingBalance-$request->input('grandValue')-$prevBalance;
 			$customer->outstandingBalance = $balance;
 			$customer->save();
 			return Response::json(array('status' => 1), 200);
@@ -420,85 +420,85 @@ class InvoicesController extends Controller
 		echo json_encode($return);
 	}
 
-	public function printinvoice($id, $copy)
+	public function printcreditNote($id, $copy)
 	{
-		$invoice = Invoice::with('customer', 'product')->find($id);
+		$creditNote = CreditNote::with('customer', 'product')->find($id);
 
-		$amountInWords = $this->amountToWords($invoice['grandValue']);
-		$invoice['amountInWords'] = $amountInWords;
+		$amountInWords = $this->amountToWords($creditNote['grandValue']);
+		$creditNote['amountInWords'] = $amountInWords;
 
 		$profileSettings = ProfileSetting::find(1);
-		$invoice['profile'] = $profileSettings;
+		$creditNote['profile'] = $profileSettings;
 
-		$invoiceSettings = InvoiceSetting::find(1);
-		$invoice['invoice'] = $invoiceSettings;
+		$creditNoteSettings = CreditNoteSetting::find(1);
+		$creditNote['creditNote'] = $creditNoteSettings;
 
-		$invoice['copy'] = $copy;
+		$creditNote['copy'] = $copy;
 
-		$invoice = (object) $invoice;
+		$creditNote = (object) $creditNote;
 		if($copy=='DC'){	
-			$pdf = PDF::loadView('backend.invoiceTemplates.DC', $invoice);
-			return $pdf->stream($invoice['serialPrefix'].$invoice['serialNumber'].'_'.ucfirst($copy).'.pdf');
+			$pdf = PDF::loadView('backend.creditNoteTemplates.DC', $creditNote);
+			return $pdf->stream($creditNote['serialPrefix'].$creditNote['serialNumber'].'_'.ucfirst($copy).'.pdf');
 		} else {
-			$pdf = PDF::loadView('backend.invoiceTemplates.template1', $invoice);
-			return $pdf->stream($invoice['serialPrefix'].$invoice['serialNumber'].'_'.ucfirst($copy).'.pdf');
+			$pdf = PDF::loadView('backend.creditNoteTemplates.template1', $creditNote);
+			return $pdf->stream($creditNote['serialPrefix'].$creditNote['serialNumber'].'_'.ucfirst($copy).'.pdf');
 		}
 
 	}
-	public function changeInvoiceStatus(Request $request)
+	public function changeCreditNoteStatus(Request $request)
 	{
 		// dd($request->all());
-		$invoice = Invoice::find($request->id);
-		// dd($invoice);
-		$invoice->invoiceStatus = $request->invoiceStatus;
-		$invoice->save();
+		$creditNote = CreditNote::find($request->id);
+		// dd($creditNote);
+		$creditNote->creditNoteStatus = $request->creditNoteStatus;
+		$creditNote->save();
 		toast('Status changed Successfully!','success','top-right')->autoclose(3500);
-		return Redirect::to('invoices');
+		return Redirect::to('creditNotes');
 	}
 
-	public function payInvoiceBalance(Request $request)
+	public function payCreditNoteBalance(Request $request)
 	{
-		$invoice = Invoice::find($request->id);
-		$invoicePaymentData['invoice_id'] =  $request->id;
-		$invoicePaymentData['paymentDate'] =  $request->paymentDate;
-		$invoicePaymentData['amount'] =  $request->invoicePayment;
-		$invoicePaymentData['balance'] =  $invoice->pendingBalance - $request->invoicePayment;
-		$invoicePaymentData['user_id'] =  auth()->user()->id;
-		$invoicePaymentData['account_id'] =  $request->account_id;
-		$invoicePaymentData['description'] =  $request->description;
-		$invoicePaymentData['method'] =  $request->method;
-		$invoicepayment = InvoicePayment::create($invoicePaymentData);
+		$creditNote = CreditNote::find($request->id);
+		$creditNotePaymentData['credit_note_id'] =  $request->id;
+		$creditNotePaymentData['paymentDate'] =  $request->paymentDate;
+		$creditNotePaymentData['amount'] =  $request->creditNotePayment;
+		$creditNotePaymentData['balance'] =  $creditNote->pendingBalance - $request->creditNotePayment;
+		$creditNotePaymentData['user_id'] =  auth()->user()->id;
+		$creditNotePaymentData['account_id'] =  $request->account_id;
+		$creditNotePaymentData['description'] =  $request->description;
+		$creditNotePaymentData['method'] =  $request->method;
+		$creditNotepayment = CreditNotePayment::create($creditNotePaymentData);
 		
-		if($invoicePaymentData['balance']==0)
-			$invoice->invoiceStatus = 'paid';
+		if($creditNotePaymentData['balance']==0)
+			$creditNote->creditNoteStatus = 'paid';
 		else
-			$invoice->invoiceStatus = 'partial';
-		$invoice->amountRecieved = $invoice->amountRecieved+$request->invoicePayment;
-		$invoice->pendingBalance = $invoicePaymentData['balance'];
-		$invoice->save();
+			$creditNote->creditNoteStatus = 'partial';
+		$creditNote->amountRecieved = $creditNote->amountRecieved+$request->creditNotePayment;
+		$creditNote->pendingBalance = $creditNotePaymentData['balance'];
+		$creditNote->save();
 
 		$accounts = Account::find($request->account_id);
-		$accounts->balance = $accounts->balance+$request->invoicePayment;
+		$accounts->balance = $accounts->balance+$request->creditNotePayment;
 		$accounts->save();
 
-		$transaction['payerid'] = $invoice->customer->customerId;
+		$transaction['payerid'] = $creditNote->customer->customerId;
 		$transaction['payeeid'] = $request->account_id;
 		$transaction['account'] = $accounts->accountName;
-		$transaction['type'] 	= 'Invoice';
-		$transaction['amount'] = $request->invoicePayment;
+		$transaction['type'] 	= 'Payment';
+		$transaction['amount'] = $request->creditNotePayment;
 		$transaction['description'] = $request->description;
 		$transaction['date'] = $request->paymentDate;
-		$transaction['cr'] = $request->invoicePayment;
+		$transaction['cr'] = $request->creditNotePayment;
 		$transaction['bal'] = $accounts->balance;
 		$transfer = Transaction::create($transaction);
 		
-		$contact = Contact::find($invoice->customer->customerId);
-		$balance = $contact->outstandingBalance - $request->invoicePayment;
+		$contact = Contact::find($creditNote->customer->customerId);
+		$balance = $contact->outstandingBalance - $request->creditNotePayment;
 
 		$contact->outstandingBalance = $balance;
 		$contact->save();
 
 		toast('Payment has been done successfully!','success','top-right')->autoclose(3500);
-		return Redirect::to('invoices');
+		return Redirect::to('creditNotes');
 	}
 }

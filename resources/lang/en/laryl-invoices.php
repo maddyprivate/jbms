@@ -23,8 +23,10 @@ return [
 		'dueDate'			=> 'Due Date',
 		'invoiceStatus'		=> 'Invoice Status',
 		'grandValue'		=> 'Grand Total',
-		'customer'			=> 'Customers',
+		'customer'			=> 'Customer',
 		'options'			=> 'Options',
+		'pendingBalance'	=> 'Pending Balance',
+		'invoiceNo'			=> 'Invoice No.',
 	],
 
 	'form' => [

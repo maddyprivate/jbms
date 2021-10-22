@@ -2,16 +2,16 @@
 
 namespace App\Http\Controllers\Backend;
 
-use App\Transaction;
-use App\Purchase;
 use App\Account;
-use App\PurchasePayment;
-use App\PurchaseDealer;
-use App\PurchaseProduct;
-use App\PurchaseSetting;
+use App\DebitNote;
+use App\DebitNotePayment;
+use App\DebitNoteDealer;
+use App\DebitNoteProduct;
+use App\DebitNoteSetting;
 use App\ProfileSetting;
 use App\Contact;
 use App\Product;
+use App\Transaction;
 
 use Validator;
 use Response;
@@ -22,11 +22,11 @@ use PDF;
 use Illuminate\Http\Request;
 use App\Http\Controllers\AceController\Controller;
 
-class PurchasesController extends Controller
+class DebitNotesController extends Controller
 {
 	public function __construct(Request $request)
 	{
-		$request->route()->setParameter('page-heading', 'Purchases');		
+		$request->route()->setParameter('page-heading', 'DebitNotes');		
 	}
 	/**
 	 * Display a listing of the resource.
@@ -35,22 +35,22 @@ class PurchasesController extends Controller
 	 */
 	public function index()
 	{
-		$purchases = Purchase::paginate(10);
+		$debitNotes = DebitNote::orderBy('id','desc')->paginate(10);
 		$accounts = Account::get();
-		return view('backend.purchases.purchases_list', compact('purchases','accounts'));
+		return view('backend.debitNotes.debitNotes_list', compact('debitNotes','accounts'));
 	}
-
 	/**
 	 * Display a listing of the resource.
 	 *
 	 * @return \Illuminate\Http\Response
 	 */
-	public function viewAllPurchases()
+	public function viewAllDebitNotes()
 	{
-		$purchases = Purchase::get();
+		$debitNotes = DebitNote::get();
 
-		return view('backend.purchases.all_purchases_list', compact('purchases'));
+		return view('backend.debitNotes.all_debitNotes_list', compact('debitNotes'));
 	}
+
 	/**
 	 * Show the form for creating a new resource.
 	 *
@@ -58,43 +58,43 @@ class PurchasesController extends Controller
 	 */
 	public function create()
 	{
-		$purchaseSettings = PurchaseSetting::find(1);
+		$debitNoteSettings = DebitNoteSetting::find(1);
 
-		$purchase['serialPrefix'] = $purchaseSettings['serialPrefix'];
+		$debitNote['serialPrefix'] = $debitNoteSettings['serialPrefix'];
 
-		// Finding the purchases with set prefix
-		$purchasesCreated = Purchase::where('serialPrefix', $purchaseSettings['serialPrefix'])->get();
-		// $purchasesCreatedCount = Purchase::count('serialPrefix', $purchaseSettings['serialPrefix']);
-		$purchasesCreatedCount = $purchasesCreated->count();
+		// Finding the debitNotes with set prefix
+		$debitNotesCreated = DebitNote::where('serialPrefix', $debitNoteSettings['serialPrefix'])->get();
+		// $debitNotesCreatedCount = DebitNote::count('serialPrefix', $debitNoteSettings['serialPrefix']);
+		$debitNotesCreatedCount = $debitNotesCreated->count();
 
-		if($purchasesCreatedCount) {
+		if($debitNotesCreatedCount) {
 
 			// Assuming the last user serial is the the one which is set in settings
-			$serialNumberLastUsed = $purchaseSettings['serialNumberStart'];
+			$serialNumberLastUsed = $debitNoteSettings['serialNumberStart'];
 
 			// Finding the greatest number under used serials with the prefix from settings
-			foreach($purchasesCreated as $purchaseCreated) {
-				if($purchaseCreated['serialNumber'] > $serialNumberLastUsed) {
-					$serialNumberLastUsed = $purchaseCreated['serialNumber'];
+			foreach($debitNotesCreated as $debitNoteCreated) {
+				if($debitNoteCreated['serialNumber'] > $serialNumberLastUsed) {
+					$serialNumberLastUsed = $debitNoteCreated['serialNumber'];
 				}
 			}
 
-			$purchase['serialNumber'] = str_pad(intval($serialNumberLastUsed) + 1, strlen($purchaseSettings['serialNumberStart']), '0', STR_PAD_LEFT);
+			$debitNote['serialNumber'] = str_pad(intval($serialNumberLastUsed) + 1, strlen($debitNoteSettings['serialNumberStart']), '0', STR_PAD_LEFT);
 
 		} else {
 
-			$purchase['serialNumber'] = $purchaseSettings['serialNumberStart'];
+			$debitNote['serialNumber'] = $debitNoteSettings['serialNumberStart'];
 
 		}
 
 		$profileSettings = ProfileSetting::find(1);
 
-		$purchase['placeOfOrigin'] = $profileSettings['placeOfOrigin'];
-		$purchase['businessName'] = $profileSettings['businessName'];
+		$debitNote['placeOfOrigin'] = $profileSettings['placeOfOrigin'];
+		$debitNote['businessName'] = $profileSettings['businessName'];
 
-		$purchase = (object) $purchase;
-		clock($purchase);
-		return view('backend.purchases.create_purchase', compact('purchase'));
+		$debitNote = (object) $debitNote;
+		clock($debitNote);
+		return view('backend.debitNotes.create_debitNote', compact('debitNote'));
 	}
 
 	/**
@@ -110,14 +110,14 @@ class PurchasesController extends Controller
 		$attributeNames = array(
 			'dealer.name' => 'Dealer Name',
 			'dealer.mobile' => 'Dealer Mobile',
-			'purchaseProducts.*.description' => 'purchase product description',
+			'debitNoteProducts.*.description' => 'debitNote product description',
 		 );
 		
 		$rules = array(
 			'placeOfSupply'				=> 'required',
 			'dealer.name'				=> 'required',
 			'dealer.mobile'			=> 'required|regex:/\+91[[:space:]]\d{10}/',
-			'purchaseProducts.*.description'	=> 'required',
+			'debitNoteProducts.*.description'	=> 'required',
 		);
 
 		$validator = Validator::make($request->all(), $rules);
@@ -131,27 +131,29 @@ class PurchasesController extends Controller
 			), 400);
 
 		} else {
-			$purchaseData = $request->except('dealer', 'purchaseProducts', '_token','dealerId');
-			$purchaseDealerData = $request->input('dealer');
-			$purchaseProductsData = $request->input('purchaseProducts');
+			$debitNoteData = $request->except('dealer', 'debitNoteProducts', '_token','dealerId');
+			$debitNoteData['pendingBalance'] = $debitNoteData['grandValue'];
+			$debitNoteDealerData = $request->input('dealer');
+			$debitNoteProductsData = $request->input('debitNoteProducts');
 
-			$purchase = Purchase::updateOrCreate(['serialPrefix' => $request->input('serialPrefix'), 'serialNumber' => $request->input('serialNumber')], $purchaseData);
-			$purchase->save();
+			// dd($debitNoteData,$debitNoteDealerData,$debitNoteProductsData);
+			$debitNote = DebitNote::updateOrCreate(['serialPrefix' => $request->input('serialPrefix'), 'serialNumber' => $request->input('serialNumber')], $debitNoteData);
+			$debitNote->save();
 
-			$purchaseDealer = PurchaseDealer::updateOrCreate(['purchase_id' => $purchase['id']], $purchaseDealerData);
-			$purchase->dealer()->save($purchaseDealer);
+			$debitNoteDealer = DebitNoteDealer::updateOrCreate(['debit_note_id' => $debitNote['id']], $debitNoteDealerData);
+			$debitNote->dealer()->save($debitNoteDealer);
 
-			foreach($purchaseProductsData as $purchaseProduct){
-				$purchaseProduct = PurchaseProduct::updateOrCreate(['purchase_id' => $purchase['id'], 'purchaseSerial' => $purchaseProduct['purchaseSerial']], $purchaseProduct);
-				$purchase->product()->save($purchaseProduct);
+			foreach($debitNoteProductsData as $debitNoteProduct){
+				$debitNoteProduct = DebitNoteProduct::updateOrCreate(['debit_note_id' => $debitNote['id'], 'debitNoteSerial' => $debitNoteProduct['debitNoteSerial']], $debitNoteProduct);
+				$debitNote->product()->save($debitNoteProduct);
 
-				$purchaseProductIds[] = $purchaseProduct['purchaseSerial'];
+				$debitNoteProductIds[] = $debitNoteProduct['debitNoteSerial'];
 			}
 
-			$deleteMissingProducts = PurchaseProduct::where('purchase_id', $purchase['id'])
-						->whereNotIn('purchaseSerial', $purchaseProductIds)
+			$deleteMissingProducts = DebitNoteProduct::where('debit_note_id', $debitNote['id'])
+						->whereNotIn('debitNoteSerial', $debitNoteProductIds)
 						->delete();
-			$dealer = Contact::find($purchaseDealerData['dealerId']);
+			$dealer = Contact::find($debitNoteDealerData['dealerId']);
 			$balance = $dealer->outstandingBalance+$request->input('grandValue');
 			$dealer->outstandingBalance = $balance;
 			$dealer->save();
@@ -167,22 +169,22 @@ class PurchasesController extends Controller
 	 */
 	public function show($id)
 	{
-		$purchase = Purchase::with('dealer', 'product')->find($id);
+		$debitNote = DebitNote::with('dealer', 'product')->find($id);
 
-		$amountInWords = $this->amountToWords($purchase['grandValue']);
-		$purchase['amountInWords'] = $amountInWords;
+		$amountInWords = $this->amountToWords($debitNote['grandValue']);
+		$debitNote['amountInWords'] = $amountInWords;
 
 		$profileSettings = ProfileSetting::find(1);
-		$purchase['profile'] = $profileSettings;
+		$debitNote['profile'] = $profileSettings;
 
-		$purchaseSettings = PurchaseSetting::find(1);
-		$purchase['purchase'] = $purchaseSettings;
+		$debitNoteSettings = DebitNoteSetting::find(1);
+		$debitNote['debitNote'] = $debitNoteSettings;
 
-		$purchase = (object) $purchase;
+		$debitNote = (object) $debitNote;
 
-		clock($purchase);
+		clock($debitNote);
 
-		return view('backend.purchases.view_purchase', compact('purchase'));
+		return view('backend.debitNotes.view_debitNote', compact('debitNote'));
 	}
 
 	public function amountToWords(float $amount){
@@ -304,19 +306,19 @@ class PurchasesController extends Controller
 	 */
 	public function edit($id)
 	{
-		$purchase = Purchase::with('dealer', 'product')->find($id);
+		$debitNote = DebitNote::with('dealer', 'product')->find($id);
 
 		$profileSettings = ProfileSetting::find(1);
-		$purchase['profile'] = $profileSettings;
+		$debitNote['profile'] = $profileSettings;
 
-		$purchaseSettings = PurchaseSetting::find(1);
-		$purchase['purchase'] = $purchaseSettings;
+		$debitNoteSettings = DebitNoteSetting::find(1);
+		$debitNote['debitNote'] = $debitNoteSettings;
 
-		$purchase = (object) $purchase;
+		$debitNote = (object) $debitNote;
 
-		clock($purchase);
+		clock($debitNote);
 
-		return view('backend.purchases.edit_purchase', compact('purchase'));
+		return view('backend.debitNotes.edit_debitNote', compact('debitNote'));
 	}
 
 	/**
@@ -331,14 +333,14 @@ class PurchasesController extends Controller
 		$attributeNames = array(
 			'dealer.name' => 'Dealer Name',
 			'dealer.mobile' => 'Dealer Mobile',
-			'purchaseProducts.*.description' => 'purchase product description',
+			'debitNoteProducts.*.description' => 'debitNote product description',
 		 );
 		
 		$rules = array(
 			'placeOfSupply'				=> 'required',
 			'dealer.name'				=> 'required',
 			'dealer.mobile'			=> 'required|regex:/\+91[[:space:]]\d{10}/',
-			'purchaseProducts.*.description'	=> 'required',
+			'debitNoteProducts.*.description'	=> 'required',
 		);
 
 		$validator = Validator::make($request->all(), $rules);
@@ -353,27 +355,27 @@ class PurchasesController extends Controller
 
 		} else {
 
-			$purchaseData = $request->except('dealer', 'purchaseProducts', '_token', '_method','dealerId');
-			$purchaseDealerData = $request->input('dealer');
-			$purchaseProductsData = $request->input('purchaseProducts');
+			$debitNoteData = $request->except('dealer', 'debitNoteProducts', '_token', '_method','dealerId');
+			$debitNoteDealerData = $request->input('dealer');
+			$debitNoteProductsData = $request->input('debitNoteProducts');
 
-			$purchase = Purchase::with('dealer')->find($id);
-			$prevBalance = $purchase->grandValue;
-			Purchase::whereId($id)->update($purchaseData);
+			$debitNote = DebitNote::with('dealer')->find($id);
+			$prevBalance = $debitNote->grandValue;
+			DebitNote::whereId($id)->update($debitNoteData);
 
-			$purchase->dealer->update($purchaseDealerData);
+			$debitNote->dealer->update($debitNoteDealerData);
 
-			foreach($purchaseProductsData as $purchaseProduct){
-				$purchase->product()->where('purchaseSerial', $purchaseProduct['purchaseSerial'])->updateOrCreate(['purchase_id' => $purchase['id'], 'purchaseSerial' => $purchaseProduct['purchaseSerial']], $purchaseProduct);
+			foreach($debitNoteProductsData as $debitNoteProduct){
+				$debitNote->product()->where('debitNoteSerial', $debitNoteProduct['debitNoteSerial'])->updateOrCreate(['debit_note_id' => $debitNote['id'], 'debitNoteSerial' => $debitNoteProduct['debitNoteSerial']], $debitNoteProduct);
 
-				$purchaseProductIds[] = $purchaseProduct['purchaseSerial'];
+				$debitNoteProductIds[] = $debitNoteProduct['debitNoteSerial'];
 			}
 
-			$deleteMissingProducts = PurchaseProduct::where('purchase_id', $purchase['id'])
-						->whereNotIn('purchaseSerial', $purchaseProductIds)
+			$deleteMissingProducts = DebitNoteProduct::where('debit_note_id', $debitNote['id'])
+						->whereNotIn('debitNoteSerial', $debitNoteProductIds)
 						->delete();
 						
-			$dealer = Contact::find($purchaseDealerData['dealerId']);
+			$dealer = Contact::find($debitNoteDealerData['dealerId']);
 			$balance = $dealer->outstandingBalance+$request->input('grandValue')-$prevBalance;
 			$dealer->outstandingBalance = $balance;
 			$dealer->save();
@@ -418,85 +420,85 @@ class PurchasesController extends Controller
 		echo json_encode($return);
 	}
 
-	public function printpurchase($id, $copy)
+	public function printdebitNote($id, $copy)
 	{
-		$purchase = Purchase::with('dealer', 'product')->find($id);
+		$debitNote = DebitNote::with('dealer', 'product')->find($id);
 
-		$amountInWords = $this->amountToWords($purchase['grandValue']);
-		$purchase['amountInWords'] = $amountInWords;
+		$amountInWords = $this->amountToWords($debitNote['grandValue']);
+		$debitNote['amountInWords'] = $amountInWords;
 
 		$profileSettings = ProfileSetting::find(1);
-		$purchase['profile'] = $profileSettings;
+		$debitNote['profile'] = $profileSettings;
 
-		$purchaseSettings = PurchaseSetting::find(1);
-		$purchase['purchase'] = $purchaseSettings;
+		$debitNoteSettings = DebitNoteSetting::find(1);
+		$debitNote['debitNote'] = $debitNoteSettings;
 
-		$purchase['copy'] = $copy;
+		$debitNote['copy'] = $copy;
 
-		$purchase = (object) $purchase;
+		$debitNote = (object) $debitNote;
 		if($copy=='DC'){	
-			$pdf = PDF::loadView('backend.purchaseTemplates.DC', $purchase);
-			return $pdf->stream($purchase['serialPrefix'].$purchase['serialNumber'].'_'.ucfirst($copy).'.pdf');
+			$pdf = PDF::loadView('backend.debitNoteTemplates.DC', $debitNote);
+			return $pdf->stream($debitNote['serialPrefix'].$debitNote['serialNumber'].'_'.ucfirst($copy).'.pdf');
 		} else {
-			$pdf = PDF::loadView('backend.purchaseTemplates.template1', $purchase);
-			return $pdf->stream($purchase['serialPrefix'].$purchase['serialNumber'].'_'.ucfirst($copy).'.pdf');
+			$pdf = PDF::loadView('backend.debitNoteTemplates.template1', $debitNote);
+			return $pdf->stream($debitNote['serialPrefix'].$debitNote['serialNumber'].'_'.ucfirst($copy).'.pdf');
 		}
 
 	}
-	public function changePurchaseStatus(Request $request)
+	public function changeDebitNoteStatus(Request $request)
 	{
 		// dd($request->all());
-		$purchase = Purchase::find($request->id);
-		// dd($purchase);
-		$purchase->purchaseStatus = $request->purchaseStatus;
-		$purchase->save();
+		$debitNote = DebitNote::find($request->id);
+		// dd($debitNote);
+		$debitNote->debitNoteStatus = $request->debitNoteStatus;
+		$debitNote->save();
 		toast('Status changed Successfully!','success','top-right')->autoclose(3500);
-		return Redirect::to('purchases');
+		return Redirect::to('debitNotes');
 	}
-	public function payPurchaseBalance(Request $request)
+
+	public function payDebitNoteBalance(Request $request)
 	{
-		$purchase = Purchase::find($request->id);
-		// dd($request->all());
-		$purchasePaymentData['purchase_id'] =  $request->id;
-		$purchasePaymentData['paymentDate'] =  $request->paymentDate;
-		$purchasePaymentData['amount'] =  $request->purchasePayment;
-		$purchasePaymentData['balance'] =  $purchase->pendingBalance - $request->purchasePayment;
-		$purchasePaymentData['user_id'] =  auth()->user()->id;
-		$purchasePaymentData['account_id'] =  $request->account_id;
-		$purchasePaymentData['description'] =  $request->description;
-		$purchasePaymentData['method'] =  $request->method;
-		$purchasepayment = PurchasePayment::create($purchasePaymentData);
+		$debitNote = DebitNote::find($request->id);
+		$debitNotePaymentData['debit_note_id'] =  $request->id;
+		$debitNotePaymentData['paymentDate'] =  $request->paymentDate;
+		$debitNotePaymentData['amount'] =  $request->debitNotePayment;
+		$debitNotePaymentData['balance'] =  $debitNote->pendingBalance - $request->debitNotePayment;
+		$debitNotePaymentData['user_id'] =  auth()->user()->id;
+		$debitNotePaymentData['account_id'] =  $request->account_id;
+		$debitNotePaymentData['description'] =  $request->description;
+		$debitNotePaymentData['method'] =  $request->method;
+		$debitNotepayment = DebitNotePayment::create($debitNotePaymentData);
 		
-		if($purchasePaymentData['balance']==0)
-			$purchase->purchaseStatus = 'paid';
+		if($debitNotePaymentData['balance']==0)
+			$debitNote->debitNoteStatus = 'paid';
 		else
-			$purchase->purchaseStatus = 'partial';
-		$purchase->amountRecieved = $purchase->amountRecieved+$request->purchasePayment;
-		$purchase->pendingBalance = $purchasePaymentData['balance'];
-		$purchase->save();
+			$debitNote->debitNoteStatus = 'partial';
+		$debitNote->amountRecieved = $debitNote->amountRecieved+$request->debitNotePayment;
+		$debitNote->pendingBalance = $debitNotePaymentData['balance'];
+		$debitNote->save();
 
 		$accounts = Account::find($request->account_id);
-		$accounts->balance = $accounts->balance-$request->purchasePayment;
+		$accounts->balance = $accounts->balance+$request->debitNotePayment;
 		$accounts->save();
 
-		$transaction['payerid'] = $purchase->dealer->dealerId;
+		$transaction['payerid'] = $debitNote->dealer->dealerId;
 		$transaction['payeeid'] = $request->account_id;
 		$transaction['account'] = $accounts->accountName;
-		$transaction['type'] 	= 'Purchase';
-		$transaction['amount'] = $request->purchasePayment;
+		$transaction['type'] 	= 'Payment';
+		$transaction['amount'] = $request->debitNotePayment;
 		$transaction['description'] = $request->description;
 		$transaction['date'] = $request->paymentDate;
-		$transaction['dr'] = $request->purchasePayment;
+		$transaction['cr'] = $request->debitNotePayment;
 		$transaction['bal'] = $accounts->balance;
 		$transfer = Transaction::create($transaction);
 		
-		$contact = Contact::find($purchase->dealer->dealerId);
-		$balance = $contact->outstandingBalance - $request->purchasePayment;
+		$contact = Contact::find($debitNote->dealer->dealerId);
+		$balance = $contact->outstandingBalance - $request->debitNotePayment;
 
 		$contact->outstandingBalance = $balance;
 		$contact->save();
 
 		toast('Payment has been done successfully!','success','top-right')->autoclose(3500);
-		return Redirect::to('purchases');
+		return Redirect::to('debitNotes');
 	}
 }

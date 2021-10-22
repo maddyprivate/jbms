@@ -18,14 +18,14 @@ return [
 	],
 
 	'table' => [
-		'#'					=> '#',
-		'issueDate'			=> 'Pur. Date',
+		'#'					=> 'Sr.No.',
+		'issueDate'			=> 'Purchase Date',
 		'dueDate'			=> 'Due Date',
 		'purchaseStatus'		=> 'Purchase Status',
 		'grandValue'		=> 'Grand Total',
 		'dealer'			=> 'Dealer',
-		'billNo'			=> 'Bill No.',
 		'options'			=> 'Options',
+		'billNo'			=> 'Bill No.',
 	],
 
 	'form' => [
@@ -42,8 +42,8 @@ return [
 			'shippingAddress'	=> 'Shipping Address',
 			'placeOfSupply'		=> 'Place of Supply',
 			'discountRate'		=> 'Discount (%)',
-			'billNo'		=> 'Bill No.',
 			'purchaseStatus'		=> 'Purchase Status',
+			'billNo'		=> 'Bill No.',
 		]
 	],
 

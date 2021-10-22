@@ -51,7 +51,7 @@ class TransferController extends Controller
         $rules = array(
             'date'              => 'required',
             'fromAccountId'     => 'required',
-            'toAccountId'       => 'required',
+            'toAccount'       => 'required',
             'amount'            => 'required',
             'description'       => 'required',
             'method'          => 'required',
@@ -79,12 +79,13 @@ class TransferController extends Controller
             $fromaccount->balance = $fromaccount->balance-$request->amount;
             $fromaccount->save();
 
-            $toaccount = Account::find($request->toAccountId);
+            /*$toaccount = Account::find($request->toAccountId);
             $toaccount->balance = $toaccount->balance+$request->amount;
-            $toaccount->save();
+            $toaccount->save();*/
 
             $transactionData['payerid'] = $request->fromAccountId;
-            $transactionData['payeeid'] = $request->toAccountId;
+            $transactionData['toAccount'] = $request->toAccount;
+            // $transactionData['payeeid'] = $request->toAccountId;
             $transactionData['type'] = 'Transfer';
             $transactionData['amount'] = $request->amount;
             $transactionData['description'] = $request->description;
