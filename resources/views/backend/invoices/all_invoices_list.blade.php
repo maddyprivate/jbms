@@ -35,7 +35,7 @@
 								<tbody>
 									@php
 										$invoice_array = $invoices->toArray();
-										$i = $invoice_array['from'];
+										$i = 1;
 									@endphp
 
 									@if(count($invoices) > 0)
