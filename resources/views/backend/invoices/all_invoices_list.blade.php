@@ -23,18 +23,19 @@
 								<thead>
 									<tr>
 										<th> @lang('laryl-invoices.table.#') </th>
+										<th> @lang('laryl-invoices.table.invoiceNo') </th>
 										<th> @lang('laryl-invoices.table.issueDate') </th>
-										<!-- <th> @lang('laryl-invoices.table.dueDate') </th> -->
 										<th> @lang('laryl-invoices.table.customer') </th>
 										<th> @lang('laryl-invoices.table.invoiceStatus') </th>
 										<th> @lang('laryl-invoices.table.grandValue') </th>
+										<th> @lang('laryl-invoices.table.pendingBalance') </th>
 										<th> @lang('laryl-invoices.table.options') </th>
 									</tr>
 								</thead>
 								<tbody>
 									@php
 										$invoice_array = $invoices->toArray();
-										$i = 1;
+										$i = $invoice_array['from'];
 									@endphp
 
 									@if(count($invoices) > 0)
@@ -42,11 +43,12 @@
 										@foreach($invoices as $invoice)
 											<tr>
 												<th class="scope-row">{{$i}}</th>
+												<td class="t-up">{{$invoice['serialPrefix']}}{{$invoice['serialNumber']}}</td>
 												<td class="t-cap">{{date('d/m/Y', strtotime($invoice['issueDate']))}}</td>
-												<!-- <td class="t-up">{{date('d/m/Y', strtotime($invoice['dueDate']))}}</td> -->
 												<td class="t-up">{{$invoice['customer']['name']}}</td>
 												<td class="t-up">{{$invoice['invoiceStatus']}}</td>
 												<td class="t-cap">Rs. {{$invoice['grandValue']}}</td>
+												<td class="t-cap">Rs. {{$invoice['pendingBalance']}}</td>
 												<td>
 
 														<a class="btn btn-sm btn-success mb-2 mb-sm-0" href="{{ route('Invoices.invoices.show', $invoice['id'])  }}" data-toggle="tooltip" title="@lang('laryl.tooltips.show')">
@@ -56,7 +58,7 @@
 														<a class="btn btn-sm btn-warning mb-2 mb-sm-0" href="{{ route('Invoices.invoices.edit', $invoice['id'])  }}" data-toggle="tooltip" title="@lang('laryl.tooltips.edit')">
 															@lang('laryl.buttons.edit')
 														</a>
-														<a class="btn btn-sm btn-primary mb-2 mb-sm-0" data-remodal-target="invoiceStatusChange" href="javascript:;"  title="@lang('laryl.tooltips.payment')" onclick="$('#invoiceStatusChange').val('{{$invoice['invoiceStatus']}}');$('#id').val('{{$invoice['id']}}');">
+														<a class="btn btn-sm btn-primary mb-2 mb-sm-0 cls_invoicePayment_btn" data-remodal-target="invoicePayment" href="javascript:;" data-pendingBalance="{{$invoice['pendingBalance']}}" data-invoiceNumber="{{$invoice['serialPrefix']}}{{$invoice['serialNumber']}}" data-id="{{$invoice['id']}}" title="@lang('laryl.tooltips.payment')" >
 															@lang('laryl.buttons.payment')
 														</a>
 												</td>
