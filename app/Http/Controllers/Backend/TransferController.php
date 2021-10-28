@@ -97,12 +97,12 @@ class TransferController extends Controller
             $transactionData['bal'] = $fromaccount->balance;
             $transfer1 = Transaction::create($transactionData);
             
-            $transactionData['account'] = $transfer->toaccounts->accountName;
+           /* $transactionData['account'] = $transfer->toAccount;
             $transactionData['cr'] = $request->amount;
             $transactionData['dr'] = 0;
             $transactionData['bal'] = $toaccount->balance; 
 
-            $transfer2 = Transaction::create($transactionData);
+            $transfer2 = Transaction::create($transactionData);*/
 
             toast('Transfer Created Successfully!','success','top-right')->autoclose(3500);
             return Redirect::to('transfers/');
