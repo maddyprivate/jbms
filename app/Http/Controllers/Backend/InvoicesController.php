@@ -47,8 +47,8 @@ class InvoicesController extends Controller
 	public function viewAllInvoices()
 	{
 		$invoices = Invoice::get();
-
-		return view('backend.invoices.all_invoices_list', compact('invoices'));
+		$accounts = Account::get();
+		return view('backend.invoices.all_invoices_list', compact('invoices','accounts'));
 	}
 
 	/**

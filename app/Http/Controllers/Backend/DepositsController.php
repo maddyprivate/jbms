@@ -87,6 +87,7 @@ class DepositsController extends Controller
 			$transferData['payeeid'] = $request->account_id;
 			$transferData['account'] = $deposit->accounts->accountName;
             $transferData['type'] = 'Deposit';
+            $transactionData['typeId'] = $deposit->id;
             $transferData['amount'] = $request->amount;
             $transferData['description'] = $request->description;
             $transferData['date'] = $request->date;
@@ -209,19 +210,20 @@ class DepositsController extends Controller
 	 */
 	public function edit($id)
 	{
-		$deposit = Deposit::with('customer', 'product')->find($id);
+		$accounts = Account::get();
+		$deposit = Deposit::with('accounts')->find($id);
 
-		$profileSettings = ProfileSetting::find(1);
+/*		$profileSettings = ProfileSetting::find(1);
 		$deposit['profile'] = $profileSettings;
 
 		$depositSettings = DepositSetting::find(1);
-		$deposit['deposit'] = $depositSettings;
+		$deposit['deposit'] = $depositSettings;*/
 
 		$deposit = (object) $deposit;
 
 		clock($deposit);
 
-		return view('backend.deposits.edit_deposit', compact('deposit'));
+		return view('backend.deposits.edit_deposit', compact('deposit','accounts'));
 	}
 
 	/**
@@ -233,6 +235,53 @@ class DepositsController extends Controller
 	 */
 	public function update(Request $request, $id)
 	{
+		clock($request->all());
+
+		$rules = array(
+			'date'				=> 'required',
+			'account_id'		=> 'required',
+			'amount'			=> 'required',
+			/*'description'		=> 'required',
+			'chequeNo'			=> 'required',
+			'ref'				=> 'required',
+			'person'			=> 'required',*/
+		);
+
+		$validator = Validator::make($request->all(), $rules);
+		if ($validator->fails()) {
+
+			toast('Rectify errors and re-submit!','error','top-right')->autoclose(3500);
+
+            return Redirect::to('deposits/create')
+                ->withErrors($validator)
+                ->withInput($request->input());
+
+		} else {
+			$deposit = Deposit::with('customer')->find($id);
+
+			Deposit::whereId($id)->update($depositData);
+
+			return Response::json(array('status' => 1), 200);
+
+			$account = Account::find($request->account_id);
+			$account->balance = $account->balance+$request->amount;
+			$account->save();
+
+			$transferData['payeeid'] = $request->account_id;
+			$transferData['account'] = $deposit->accounts->accountName;
+            $transferData['type'] = 'Deposit';
+            $transactionData['typeId'] = $deposit->id;
+            $transferData['amount'] = $request->amount;
+            $transferData['description'] = $request->description;
+            $transferData['date'] = $request->date;
+            $transferData['cr'] = $request->amount;
+            $transferData['bal'] = $deposit->accounts->balance;
+            
+            $transfer = Transaction::create($transferData);
+			toast('Deposit Created Successfully!','success','top-right')->autoclose(3500);
+            return Redirect::to('deposits/');
+		}
+
 		$attributeNames = array(
 			'customer.name' => 'Customer Name',
 			'customer.mobile' => 'Customer Mobile',
@@ -258,27 +307,7 @@ class DepositsController extends Controller
 
 		} else {
 
-			$depositData = $request->except('customer', 'depositProducts', '_token', '_method');
-			$depositCustomerData = $request->input('customer');
-			$depositProductsData = $request->input('depositProducts');
-
-			$deposit = Deposit::with('customer')->find($id);
-
-			Deposit::whereId($id)->update($depositData);
-
-			$deposit->customer->update($depositCustomerData);
-
-			foreach($depositProductsData as $depositProduct){
-				$deposit->product()->where('depositSerial', $depositProduct['depositSerial'])->updateOrCreate(['deposit_id' => $deposit['id'], 'depositSerial' => $depositProduct['depositSerial']], $depositProduct);
-
-				$depositProductIds[] = $depositProduct['depositSerial'];
-			}
-
-			$deleteMissingProducts = DepositProduct::where('deposit_id', $deposit['id'])
-						->whereNotIn('depositSerial', $depositProductIds)
-						->delete();
-
-			return Response::json(array('status' => 1), 200);
+		
 		}
 	}
 

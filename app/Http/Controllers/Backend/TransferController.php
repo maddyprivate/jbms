@@ -87,6 +87,7 @@ class TransferController extends Controller
             $transactionData['toAccount'] = $request->toAccount;
             // $transactionData['payeeid'] = $request->toAccountId;
             $transactionData['type'] = 'Transfer';
+            $transactionData['typeId'] = $transfer->id;
             $transactionData['amount'] = $request->amount;
             $transactionData['description'] = $request->description;
             $transactionData['date'] = $request->date;

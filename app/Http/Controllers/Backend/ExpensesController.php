@@ -118,6 +118,7 @@ class ExpensesController extends Controller
 			$transferData['payerid'] = $request->account_id;
 			$transferData['account'] = $expense->accounts->accountName;
             $transferData['type'] = 'Expense';
+            $transactionData['typeId'] = $expense->id;
             $transferData['amount'] = $request->amount;
             $transferData['description'] = $request->description;
             $transferData['date'] = $request->date;

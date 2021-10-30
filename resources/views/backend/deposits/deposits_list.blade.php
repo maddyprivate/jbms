@@ -44,13 +44,13 @@
 											<tr>
 												<th class="scope-row">{{$key+1}}</th>
 												<td class="t-cap">{{dmyDate($deposit['date'])}}</td>
-												<td class="t-up">{{$deposit['amount']}}</td>
+												<td class="t-up">Rs. {{$deposit['amount']}}</td>
 												<td class="t-up">{{$deposit['accounts']['accountName']}}</td>
-												<td class="t-cap">Rs. {{$deposit['description']}}</td>
-												<td class="t-cap">Rs. {{$deposit['chequeNo']}}</td>
-												<td class="t-cap">Rs. {{$deposit['ref']}}</td>
-												<td class="t-cap">Rs. {{$deposit['person']}}</td>
-												<!-- <td>
+												<td class="t-cap">{{$deposit['description']}}</td>
+												<td class="t-cap">{{$deposit['chequeNo']}}</td>
+												<td class="t-cap">{{$deposit['ref']}}</td>
+												<td class="t-cap">{{$deposit['person']}}</td>
+												<td>
 
 														<a class="btn btn-sm btn-success mb-2 mb-sm-0" href="{{ route('Deposits.deposits.show', $deposit['id'])  }}" data-toggle="tooltip" title="@lang('laryl.tooltips.show')">
 															@lang('laryl.buttons.show')
@@ -60,7 +60,7 @@
 															@lang('laryl.buttons.edit')
 														</a>
 
-												</td> -->
+												</td>
 											</tr>
 
 											@php $i++; @endphp
