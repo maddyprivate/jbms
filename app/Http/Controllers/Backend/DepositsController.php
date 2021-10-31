@@ -87,7 +87,7 @@ class DepositsController extends Controller
 			$transferData['payeeid'] = $request->account_id;
 			$transferData['account'] = $deposit->accounts->accountName;
             $transferData['type'] = 'Deposit';
-            $transactionData['typeId'] = $deposit->id;
+            $transferData['typeId'] = $deposit->id;
             $transferData['amount'] = $request->amount;
             $transferData['description'] = $request->description;
             $transferData['date'] = $request->date;
@@ -257,57 +257,42 @@ class DepositsController extends Controller
                 ->withInput($request->input());
 
 		} else {
-			$deposit = Deposit::with('customer')->find($id);
+			$depositData = $request->except('_token', '_method');
+			$deposit = Deposit::find($id);
+			$preAmount = $deposit->amount;
+			$curAmount = $request->amount;
+			$prevAccountId = $deposit->account_id;
+			$curAccountId = $request->account_id;
+			if($prevAccountId==$curAccountId){
+				$prevAccount = Account::find($prevAccountId);
+				$prevAccount->balance = $prevAccount->balance-$preAmount+$curAmount;
+				$prevAccount->save();
+			} else{
+				$curAccount = Account::find($curAccountId);
+				$curAccount->balance = $curAccount->balance+$curAmount;
+				$curAccount->save();
 
+				$prevAccount = Account::find($prevAccountId);
+				$prevAccount->balance = $prevAccount->balance-$preAmount;
+				$prevAccount->save();
+			}
 			Deposit::whereId($id)->update($depositData);
 
-			return Response::json(array('status' => 1), 200);
 
-			$account = Account::find($request->account_id);
-			$account->balance = $account->balance+$request->amount;
-			$account->save();
-
-			$transferData['payeeid'] = $request->account_id;
-			$transferData['account'] = $deposit->accounts->accountName;
-            $transferData['type'] = 'Deposit';
-            $transactionData['typeId'] = $deposit->id;
-            $transferData['amount'] = $request->amount;
-            $transferData['description'] = $request->description;
-            $transferData['date'] = $request->date;
-            $transferData['cr'] = $request->amount;
-            $transferData['bal'] = $deposit->accounts->balance;
+			$transactionData['payeeid'] = $request->account_id;
+			$transactionData['account'] = $deposit->accounts->accountName;
+            // $transactionData['type'] = 'Deposit';
+            // $transactionData['typeId'] = $deposit->id;
+            $transactionData['amount'] = $request->amount;
+            $transactionData['description'] = $request->description;
+            $transactionData['date'] = $request->date;
+            $transactionData['cr'] = $request->amount;
+            $transactionData['bal'] = $deposit->accounts->balance;
+            $transaction = Transaction::where('typeId',$id)->where('type','Deposit')->update($transactionData);
             
-            $transfer = Transaction::create($transferData);
-			toast('Deposit Created Successfully!','success','top-right')->autoclose(3500);
+			toast('Deposit updated Successfully!','success','top-right')->autoclose(3500);
             return Redirect::to('deposits/');
-		}
 
-		$attributeNames = array(
-			'customer.name' => 'Customer Name',
-			'customer.mobile' => 'Customer Mobile',
-			'depositProducts.*.description' => 'deposit product description',
-		 );
-		
-		$rules = array(
-			'placeOfSupply'				=> 'required',
-			'customer.name'				=> 'required',
-			'customer.mobile'			=> 'required|regex:/\+91[[:space:]]\d{10}/',
-			'depositProducts.*.description'	=> 'required',
-		);
-
-		$validator = Validator::make($request->all(), $rules);
-		$validator->setAttributeNames($attributeNames);
-
-		if ($validator->fails()) {
-
-			return Response::json(array(
-				'status' => 0,
-				'errors' => $validator->errors()
-			), 400);
-
-		} else {
-
-		
 		}
 	}
 
@@ -319,7 +304,7 @@ class DepositsController extends Controller
 	 */
 	public function destroy($id)
 	{
-		//
+		dd(111);
 	}
 
 	public function selectCustomer($customerName)

@@ -30,6 +30,7 @@
 										<th> @lang('laryl-deposits.table.chequeNo') </th>
 										<th> @lang('laryl-deposits.table.ref') </th>
 										<th> @lang('laryl-deposits.table.person') </th>
+										<th> @lang('laryl-deposits.table.options') </th>
 									</tr>
 								</thead>
 								<tbody>
@@ -58,6 +59,10 @@
 
 														<a class="btn btn-sm btn-warning mb-2 mb-sm-0" href="{{ route('Deposits.deposits.edit', $deposit['id'])  }}" data-toggle="tooltip" title="@lang('laryl.tooltips.edit')">
 															@lang('laryl.buttons.edit')
+														</a>
+
+														<a class="btn btn-sm btn-danger mb-2 mb-sm-0" data-toggle="tooltip" title="@lang('laryl.tooltips.delete')" onclick="deleteDeposit('{{$deposit['id']}}')">
+															@lang('laryl.buttons.delete')
 														</a>
 
 												</td>
@@ -96,4 +101,13 @@
 		</div>
 	</div>
 </section>
+@endsection
+@section('footer')
+<script type="text/javascript">
+	// $(document).ready(function() {
+		function deleteDeposit(id){
+			alert(id);
+		}
+	// });
+</script>
 @endsection

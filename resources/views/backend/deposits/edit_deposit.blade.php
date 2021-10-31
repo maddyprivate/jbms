@@ -22,7 +22,8 @@
 
 							<div class="row">
 								<div class="col-md-12 mx-auto">
-									<form id="newExpenseForm" method="POST" action="{{ route('Deposits.deposits.store') }}">
+									<form id="editDepositForm" method="POST" action="{{ route('Deposits.deposits.update',$deposit->id) }}">
+										@method('PUT')
 										@csrf
 										<div class="form-group row">
 											<div class="col-sm-6">
